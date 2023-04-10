@@ -8,7 +8,7 @@ import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits._
 import org.http4s.server.middleware.Logger
 
-object ServerServer {
+object Server {
 
   def run[F[_]: Async]: F[Nothing] = {
     for {
@@ -21,8 +21,8 @@ object ServerServer {
       // want to extract segments not checked
       // in the underlying routes.
       httpApp = (
-        ServerRoutes.helloWorldRoutes[F](helloWorldAlg) <+>
-        ServerRoutes.jokeRoutes[F](jokeAlg)
+        Routes.helloWorldRoutes[F](helloWorldAlg) <+>
+        Routes.jokeRoutes[F](jokeAlg)
       ).orNotFound
 
       // With Middlewares in place
