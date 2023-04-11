@@ -30,4 +30,13 @@ object Routes {
         } yield resp
     }
   }
+
+  def graphqlRoutes[F[_]: Sync](H: HelloWorld[F]): HttpRoutes[F] = {
+    val dsl = new Http4sDsl[F]{}
+    import dsl._
+    HttpRoutes.of[F] {
+      case POST -> Root / "graphql" =>
+        req
+    }
+  }
 }

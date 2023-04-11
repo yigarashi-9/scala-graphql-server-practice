@@ -10,6 +10,8 @@ lazy val root = (project in file("."))
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.13.10",
     libraryDependencies ++= Seq(
+      "org.sangria-graphql" %% "sangria" % "3.2.0",
+      "org.sangria-graphql" %% "sangria-circe" % "1.3.2",
       "org.http4s"      %% "http4s-ember-server" % Http4sVersion,
       "org.http4s"      %% "http4s-ember-client" % Http4sVersion,
       "org.http4s"      %% "http4s-circe"        % Http4sVersion,
