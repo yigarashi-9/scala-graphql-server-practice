@@ -1,42 +1,21 @@
 package server
 
-import cats.effect.Sync
+import io.circe.Json
+import cats.effect.Async
 import cats.implicits._
+import org.http4s.circe._
 import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 
 object Routes {
-
-  def jokeRoutes[F[_]: Sync](J: Jokes[F]): HttpRoutes[F] = {
-    val dsl = new Http4sDsl[F]{}
-    import dsl._
+  def graphqlRoutes[F[_]: Async](graphQL: GraphQL[F]): HttpRoutes[F] = {
+    object dsl extends Http4sDsl[F]; import dsl._
     HttpRoutes.of[F] {
-      case GET -> Root / "joke" =>
-        for {
-          joke <- J.get
-          resp <- Ok(joke)
-        } yield resp
-    }
-  }
-
-  def helloWorldRoutes[F[_]: Sync](H: HelloWorld[F]): HttpRoutes[F] = {
-    val dsl = new Http4sDsl[F]{}
-    import dsl._
-    HttpRoutes.of[F] {
-      case GET -> Root / "hello" / name =>
-        for {
-          greeting <- H.hello(HelloWorld.Name(name))
-          resp <- Ok(greeting)
-        } yield resp
-    }
-  }
-
-  def graphqlRoutes[F[_]: Sync](H: HelloWorld[F]): HttpRoutes[F] = {
-    val dsl = new Http4sDsl[F]{}
-    import dsl._
-    HttpRoutes.of[F] {
-      case POST -> Root / "graphql" =>
-        req
+      case req @ POST -> Root / "graphql" =>
+        req.as[Json].flatMap(graphQL.query).flatMap {
+          case Right(json) => Ok(json)
+          case Left(json)  => BadRequest(json)
+        }
     }
   }
 }

@@ -12,7 +12,7 @@ class CategoryRepo {
   def category(id: String) = categories.find(_.id == id)
 }
 
-object Schema {
+object RecipeSchema {
   val CategoryType = deriveObjectType[Unit, Category](
     ObjectTypeDescription("The recipe category"),
   )
@@ -28,4 +28,6 @@ object Schema {
       resolve = c => c.ctx.category(c arg Id)
     ),
   ))
+
+  val schema = Schema(QueryType)
 }

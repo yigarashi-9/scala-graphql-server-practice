@@ -1,9 +1,7 @@
 package server
 
 import cats.effect.Async
-import cats.syntax.all._
 import com.comcast.ip4s._
-import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits._
 import org.http4s.server.middleware.Logger
@@ -11,23 +9,18 @@ import org.http4s.server.middleware.Logger
 object Server {
 
   def run[F[_]: Async]: F[Nothing] = {
+    val graphqlAlg = GraphQL.impl[F]
+    // Combine Service Routes into an HttpApp.
+    // Can also be done via a Router if you
+    // want to extract segments not checked
+    // in the underlying routes.
+    val httpApp = (
+      Routes.graphqlRoutes[F](graphqlAlg)
+    ).orNotFound
+
+    // With Middlewares in place
+    val finalHttpApp = Logger.httpApp(true, true)(httpApp)
     for {
-      client <- EmberClientBuilder.default[F].build
-      helloWorldAlg = HelloWorld.impl[F]
-      jokeAlg = Jokes.impl[F](client)
-
-      // Combine Service Routes into an HttpApp.
-      // Can also be done via a Router if you
-      // want to extract segments not checked
-      // in the underlying routes.
-      httpApp = (
-        Routes.helloWorldRoutes[F](helloWorldAlg) <+>
-        Routes.jokeRoutes[F](jokeAlg)
-      ).orNotFound
-
-      // With Middlewares in place
-      finalHttpApp = Logger.httpApp(true, true)(httpApp)
-
       _ <-
         EmberServerBuilder.default[F]
           .withHost(ipv4"0.0.0.0")
