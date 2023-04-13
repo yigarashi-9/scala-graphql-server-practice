@@ -1,4 +1,5 @@
 package server
+package model
 
 import slick.jdbc.MySQLProfile.api._
 

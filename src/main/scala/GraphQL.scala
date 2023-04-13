@@ -69,12 +69,12 @@ object GraphQL {
         case Success(ast) => {
           implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
           F.async_[Json] { (cb: Either[Throwable, Json] => Unit) =>
-            Executor.execute[RecipeSchema.MyCtx, Unit, Json](
+            Executor.execute[GraphQLContext, Unit, Json](
               schema = RecipeSchema.schema,
               queryAst = ast,
               variables = Json.fromJsonObject(variables),
               operationName = operationName,
-              userContext = new RecipeSchema.MyCtx(new RecipeSchema.CategoryRepo),
+              userContext = GraphQLContext,
             ).onComplete {
               case Success(value) => cb(Right(value))
               case Failure(error) => cb(Left(error))
