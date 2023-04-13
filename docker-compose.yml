@@ -1,0 +1,14 @@
+version: '3'
+services:
+  mysql:
+    container_name: "mysql"
+    image: "mysql:8.0.32"
+    environment:
+      MYSQL_DATABASE: "sample_recipe"
+      MYSQL_USER: "readwrite"
+      MYSQL_PASSWORD: "readwrite"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "1"
+    ports:
+      - "3307:3306"
+    volumes:
+      - "./db/sample_recipe.sql:/docker-entrypoint-initdb.d/sample_recipe.sql:ro,delegated"

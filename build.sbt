@@ -1,3 +1,4 @@
+val SlickVersion = "3.4.1"
 val Http4sVersion = "0.23.18"
 val CirceVersion = "0.14.1"
 val MunitVersion = "0.7.29"
@@ -10,6 +11,9 @@ lazy val root = (project in file("."))
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.13.10",
     libraryDependencies ++= Seq(
+      "com.typesafe.slick" %% "slick" % SlickVersion,
+      "com.typesafe.slick" %% "slick-hikaricp" % SlickVersion,
+      "mysql" % "mysql-connector-java" % "8.0.16",
       "org.sangria-graphql" %% "sangria" % "3.2.0",
       "org.sangria-graphql" %% "sangria-circe" % "1.3.2",
       "org.http4s"      %% "http4s-ember-server" % Http4sVersion,

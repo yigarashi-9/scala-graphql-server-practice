@@ -2,14 +2,14 @@ package server
 
 import sangria.macros.derive._
 import sangria.schema._
+import slick.jdbc.MySQLProfile.api._
 
 class CategoryRepo {
-  private val categories = Seq(
-    Category("1", "example", ""),
-    Category("2", "example", ""),
-  )
-
-  def category(id: String) = categories.find(_.id == id)
+  val categories = TableQuery[Categories]
+  def category(id: String) = {
+    val query = categories.filter(_.category_id === id).result.headOption
+    DB.db.run(query)
+  }
 }
 
 object RecipeSchema {
